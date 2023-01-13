@@ -1,0 +1,29 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+- name: aml_workspace
+  type: string
+- name: resource_group
+  type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Disable access to ML
+    continueOnError: false
+    inputs:
+      azureSubscription: $(ado_service_connection_rg)
+      scriptType: 'bash'
+      workingDirectory: $(System.DefaultWorkingDirectory)
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        ENDPOINT_EXISTS=$(az ml online-endpoint list -o tsv --query "[?name=='taxi-online-$(namespace)$(postfix)$(environment)'][name]" | wc -l)
+        echo $ENDPOINT_NAME $ENDPOINT_EXISTS
+        az ml online-endpoint list -o tsv
+
+        if [[ ENDPOINT_EXISTS -ne 1 ]]; then
+            az ml workspace update --public-network-access Disabled -n ${{ parameters.aml_workspace}} -g ${{ parameters.resource_group}}
+        else
+            echo "Online Endpoint exists. Exiting"
+        fi
+        
