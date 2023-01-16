@@ -17,7 +17,7 @@ steps:
       workingDirectory: $(System.DefaultWorkingDirectory)
       scriptLocation: 'inlineScript'
       inlineScript: |
-        REGISTRY_EXISTS=$(az ml registry list --resource-group ${{ parameters.resource_group}})
+        REGISTRY_EXISTS=$(az ml registry list --resource-group ${{ parameters.resource_group}} | wc -l)
         echo $REGISTRY_EXISTS
 
         if [[ REGISTRY_EXISTS -eq 1 ]]; then
