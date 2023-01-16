@@ -6,7 +6,7 @@ parameters:
   type: string
 - name: environment_file
   type: string
-- name: registry
+- name: registry_name
   type: string
 
 steps:
@@ -21,4 +21,4 @@ steps:
       inlineScript: |
         version=$(date +%s)
         echo $version
-        az ml environment create --name ${{ parameters.environment_name }} --file ${{ parameters.environment_file }} --registry-name "${{ parameters.registry }}" --set version=$version
+        az ml environment create --name ${{ parameters.environment_name }} --file ${{ parameters.environment_file }} --registry-name "${{ parameters.registry_name }}" --set version=$version
