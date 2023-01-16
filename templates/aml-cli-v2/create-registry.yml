@@ -1,0 +1,27 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+- name: resource_group
+  type: string
+- name: registry_file
+  type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Create Shared Registry
+    continueOnError: false
+    inputs:
+      azureSubscription: $(ado_service_connection_rg)
+      scriptType: 'bash'
+      workingDirectory: $(System.DefaultWorkingDirectory)
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        REGISTRY_EXISTS=$(az ml registry list --resource-group ${{ parameters.resource_group}})
+        echo $REGISTRY_EXISTS
+
+        if [[ REGISTRY_EXISTS -ne 1 ]]; then
+            az ml registry create --file ${{ parameters.registry_file}} -g ${{ parameters.resource_group}}
+        else
+            echo "Registry exists. Exiting"
+        fi
