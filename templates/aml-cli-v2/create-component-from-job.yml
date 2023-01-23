@@ -18,5 +18,5 @@ steps:
       scriptType: bash
       scriptLocation: inlineScript
       inlineScript: |
-        az ml job create --file ${{ parameters.job_file }}" \ 
+        az ml job create --file ${{ parameters.job_file }} \ 
         --set jobs.train_job.component=azureml://registries/${{ parameters.registry_name }}/component/${{ parameters.component_name }}/versions/1
