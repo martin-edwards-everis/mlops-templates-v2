@@ -19,7 +19,4 @@ steps:
       workingDirectory: $(System.DefaultWorkingDirectory)
       scriptLocation: inlineScript
       inlineScript: |
-        version=$(date +%s)
-        echo $version
-        echo 'az ml environment create --name ${{ parameters.environment_name }} --file ${{ parameters.environment_file }} --registry-name "${{ parameters.registry_name }}" --version 3'
         az ml environment create --name ${{ parameters.environment_name }} --file ${{ parameters.environment_file }} --registry-name "${{ parameters.registry_name }}" --version 3 --debug
