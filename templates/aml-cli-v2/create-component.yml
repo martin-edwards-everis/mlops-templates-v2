@@ -2,21 +2,18 @@
 # Licensed under the MIT License.
 
 parameters:
-- name: environment_name
-  type: string
-- name: environment_file
+- name: component_file
   type: string
 - name: registry_name
   type: string
 
 steps:
   - task: AzureCLI@2
-    displayName: Register Azure ML environment 
+    displayName: Create component in registry
     continueOnError: true
     inputs: 
       azureSubscription: $(ado_service_connection_rg) #needs to have access at the RG level 
       scriptType: bash
-      workingDirectory: $(System.DefaultWorkingDirectory)
       scriptLocation: inlineScript
       inlineScript: |
-        az ml environment create --name ${{ parameters.environment_name }} --file ${{ parameters.environment_file }} --registry-name "${{ parameters.registry_name }}" --version 3 
+        az ml component create --file "${{ parameters.component_file }}" --registry-name "${{ parameters.registry_name }}"
