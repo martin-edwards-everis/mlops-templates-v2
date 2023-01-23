@@ -1,0 +1,22 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+- name: job_file
+  type: string
+- name: component_name
+  type: string
+- name: registry_name
+  type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Create component in registry from job
+    continueOnError: true
+    inputs: 
+      azureSubscription: $(ado_service_connection_rg) #needs to have access at the RG level 
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az ml job create --file ${{ parameters.job_file }}" \ 
+        --set jobs.train_job.component=azureml://registries/${{ parameters.registry_name }}/component/${{ parameters.component_name }}/versions/1
