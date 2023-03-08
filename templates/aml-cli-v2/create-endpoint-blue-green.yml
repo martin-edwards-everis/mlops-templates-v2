@@ -4,6 +4,12 @@
 parameters: 
 - name: endpoint_file
   type: string
+- name: blue_deployment_file
+  type: string
+- name: green_deployment_file
+  type: string
+- name: sample_request_file
+  type: string
 
 steps:
   - task: AzureCLI@2
@@ -24,11 +30,11 @@ steps:
             echo "Endpoint exists"
         fi
 
-        az ml $(endpoint_type)-deployment create --name blue --endpoint-name $(endpoint_name) -f s/templates/templates/aml-cli-v2/blue-deployment.yml --all-traffic
+        az ml $(endpoint_type)-deployment create --name blue --endpoint-name $(endpoint_name) -f ${{ parameters.blue_deployment_file }} --all-traffic
         az ml $(endpoint_type)-endpoint show --name $(endpoint_name) 
         az ml $(endpoint_type)-deployment show --name blue --endpoint $(endpoint_name)
-        az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --request-file s/templates/templates/aml-cli-v2/sample-request.json
+        az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --request-file ${{ parameters.sample_request_file }}
         az ml $(endpoint_type)-deployment update --name blue --endpoint-name $(endpoint_name) --set instance_count=2
-        az ml $(endpoint_type)-deployment create --name green --endpoint-name $(endpoint_name) -f s/templates/templates/aml-cli-v2/green-deployment.yml
+        az ml $(endpoint_type)-deployment create --name green --endpoint-name $(endpoint_name) -f ${{ parameters.green_deployment_file }}
         az ml $(endpoint_type)-endpoint show -n $(endpoint_name) --query traffic
-        az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --deployment-name green --request-file s/templates/templates/aml-cli-v2/sample-request.json
+        az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --deployment-name green --request-file ${{ parameters.sample_request_file }}
