@@ -24,7 +24,6 @@ steps:
             echo "Endpoint exists"
         fi
 
-        az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -f ${{ parameters.endpoint_file }}
         az ml $(endpoint_type)-deployment create --name blue --endpoint-name $(endpoint_name) -f blue-deployment.yml --all-traffic
         az ml $(endpoint_type)-endpoint show --name $(endpoint_name) 
         az ml $(endpoint_type)-deployment show --name blue --endpoint $(endpoint_name)
