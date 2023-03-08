@@ -1,0 +1,35 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters: 
+- name: endpoint_file
+  type: string
+
+steps:
+  - task: AzureCLI@2
+    displayName: Create online/batch endpoint 
+    continueOnError: true
+    inputs: 
+      azureSubscription: $(ado_service_connection_rg) #needs to have access at the RG level 
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        ENDPOINT_EXISTS=$(az ml $(endpoint_type)-endpoint list -o tsv --query "[?name=='$(endpoint_name)'][name]" | wc -l)
+        echo $ENDPOINT_NAME $ENDPOINT_EXISTS
+        az ml $(endpoint_type)-endpoint list -o tsv
+
+        if [[ ENDPOINT_EXISTS -ne 1 ]]; then
+            az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -f ${{ parameters.endpoint_file }}
+        else
+            echo "Endpoint exists"
+        fi
+
+        az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -f ${{ parameters.endpoint_file }}
+        az ml $(endpoint_type)-deployment create --name blue --endpoint-name $(endpoint_name) -f blue-deployment.yml --all-traffic
+        az ml $(endpoint_type)-endpoint show --name $(endpoint_name) 
+        az ml $(endpoint_type)-deployment show --name blue --endpoint $(endpoint_name)
+        az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --request-file sample-request.json
+        az ml $(endpoint_type)-deployment update --name blue --endpoint-name $(endpoint_name) --set instance_count=2
+        az ml $(endpoint_type)-deployment create --name green --endpoint-name $(endpoint_name) -f green-deployment.yml
+        az ml $(endpoint_type)-endpoint show -n $(endpoint_name) --query traffic
+        az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --deployment-name green --request-file sample-request.json
