@@ -30,26 +30,26 @@ steps:
             echo "Endpoint exists"
         fi
 
-        echo "az ml $(endpoint_type)-deployment create --name blue --endpoint-name $(endpoint_name) -f ${{ parameters.blue_deployment_file }} --all-traffic"
+        echo -n "az ml $(endpoint_type)-deployment create --name blue --endpoint-name $(endpoint_name) -f ${{ parameters.blue_deployment_file }} --all-traffic"
         az ml $(endpoint_type)-deployment create --name blue --endpoint-name $(endpoint_name) -f ${{ parameters.blue_deployment_file }} --all-traffic
         
-        echo "az ml $(endpoint_type)-endpoint show --name $(endpoint_name)"
+        echo -n "az ml $(endpoint_type)-endpoint show --name $(endpoint_name)"
         az ml $(endpoint_type)-endpoint show --name $(endpoint_name) 
         
-        echo "az ml $(endpoint_type)-deployment show --name blue --endpoint $(endpoint_name"
+        echo -n "az ml $(endpoint_type)-deployment show --name blue --endpoint $(endpoint_name"
         az ml $(endpoint_type)-deployment show --name blue --endpoint $(endpoint_name)
         
-        echo "az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --request-file ${{ parameters.sample_request_file }}"
+        echo -n "az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --request-file ${{ parameters.sample_request_file }}"
         az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --request-file ${{ parameters.sample_request_file }}
         
-        echo "az ml $(endpoint_type)-deployment update --name blue --endpoint-name $(endpoint_name) --set instance_count=2"
+        echo -n "az ml $(endpoint_type)-deployment update --name blue --endpoint-name $(endpoint_name) --set instance_count=2"
         az ml $(endpoint_type)-deployment update --name blue --endpoint-name $(endpoint_name) --set instance_count=2
 
-        echo "az ml $(endpoint_type)-deployment create --name green --endpoint-name $(endpoint_name) -f ${{ parameters.green_deployment_file }}"
+        echo -n "az ml $(endpoint_type)-deployment create --name green --endpoint-name $(endpoint_name) -f ${{ parameters.green_deployment_file }}"
         az ml $(endpoint_type)-deployment create --name green --endpoint-name $(endpoint_name) -f ${{ parameters.green_deployment_file }}
 
-        echo "az ml $(endpoint_type)-endpoint show -n $(endpoint_name) --query traffic"
+        echo -n "az ml $(endpoint_type)-endpoint show -n $(endpoint_name) --query traffic"
         az ml $(endpoint_type)-endpoint show -n $(endpoint_name) --query traffic
 
-        echo "az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --deployment-name green --request-file ${{ parameters.sample_request_file }}"
+        echo -n "az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --deployment-name green --request-file ${{ parameters.sample_request_file }}"
         az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --deployment-name green --request-file ${{ parameters.sample_request_file }}
